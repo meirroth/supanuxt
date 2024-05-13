@@ -6,12 +6,15 @@
         :key="task.id"
         class="flex w-full items-center space-x-2"
       >
-        <p class="w-full" :class="{ 'line-through': task.completed }">
+        <p
+          class="w-full leading-tight"
+          :class="{ 'line-through': task.completed }"
+        >
           {{ task.title }}
         </p>
 
         <UToggle
-          :disabled="disabled === task.id"
+          :disabled="disabled.includes(task.id)"
           :model-value="task.completed"
           @update:model-value="completeTask(task)"
         />
@@ -21,7 +24,8 @@
           variant="soft"
           size="2xs"
           icon="i-heroicons-x-mark-20-solid"
-          :disabled="disabled === task.id"
+          :disabled="disabled.includes(task.id)"
+          :loading="disabled.includes(task.id)"
           @click="deleteTask(task)"
         />
       </li>
@@ -47,16 +51,18 @@ import type { Database, Tables } from '@/types/supabase'
 type Task = Tables<'tasks'>
 
 const client = useSupabaseClient<Database>()
+const toast = useToast()
+const title = ref('')
+const disabled = ref<number[]>([])
 
 const { data, refresh } = useAsyncData(async () => {
   const { data: tasks } = await client
     .from('tasks')
     .select('*')
+    .order('completed')
     .order('created_at')
   return tasks
 })
-
-const title = ref('')
 
 async function createTask() {
   if (!title.value) return
@@ -73,10 +79,8 @@ async function createTask() {
   }
 }
 
-const disabled = ref<number>()
-
 async function completeTask(task: Task) {
-  disabled.value = task.id
+  disabled.value.push(task.id)
 
   const { error } = await client
     .from('tasks')
@@ -84,25 +88,25 @@ async function completeTask(task: Task) {
     .eq('id', task.id)
 
   if (error) {
-    alert(error.message)
+    toast.add({ color: 'red', title: error.message })
   } else {
     await refresh()
   }
 
-  disabled.value = undefined
+  disabled.value = disabled.value.filter((id) => id !== task.id)
 }
 
 async function deleteTask(task: Task) {
-  disabled.value = task.id
+  disabled.value.push(task.id)
 
   const { error } = await client.from('tasks').delete().eq('id', task.id)
 
   if (error) {
-    alert(error.message)
+    toast.add({ color: 'red', title: error.message })
   } else {
     await refresh()
   }
 
-  disabled.value = undefined
+  disabled.value = disabled.value.filter((id) => id !== task.id)
 }
 </script>
