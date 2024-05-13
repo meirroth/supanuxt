@@ -16,7 +16,7 @@
             :checked="task.completed"
             :disabled="disabled === task.id"
             @change="completeTask(task)"
-          />
+          >
           {{ task.title }}
         </label>
       </li>
@@ -25,7 +25,7 @@
     <form @submit.prevent="createTask">
       <fieldset>
         <legend>Create a new task</legend>
-        <input v-model="title" type="text" placeholder="Task title" />
+        <input v-model="title" type="text" placeholder="Task title" >
         <button type="submit" :disabled="!title">Create</button>
       </fieldset>
     </form>
