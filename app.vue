@@ -1,5 +1,5 @@
 <template>
-  <main>
-    <TaskList />
-  </main>
+  <UContainer>
+    <TaskList class="mx-auto py-10" />
+  </UContainer>
 </template>

@@ -1,34 +1,43 @@
 <template>
-  <div>
-    <ul v-if="data">
-      <li v-for="task in data" :key="task.id">
-        <button
-          type="button"
+  <div class="max-w-xs space-y-3">
+    <ul v-if="data" class="space-y-1">
+      <li
+        v-for="task in data"
+        :key="task.id"
+        class="flex w-full items-center space-x-2"
+      >
+        <p class="w-full" :class="{ 'line-through': task.completed }">
+          {{ task.title }}
+        </p>
+
+        <UToggle
+          :disabled="disabled === task.id"
+          :model-value="task.completed"
+          @update:model-value="completeTask(task)"
+        />
+
+        <UButton
+          color="red"
+          variant="soft"
+          size="2xs"
+          icon="i-heroicons-x-mark-20-solid"
           :disabled="disabled === task.id"
           @click="deleteTask(task)"
-        >
-          ❌
-        </button>
-
-        <label>
-          <input
-            type="checkbox"
-            :checked="task.completed"
-            :disabled="disabled === task.id"
-            @change="completeTask(task)"
-          />
-          {{ task.title }}
-        </label>
+        />
       </li>
     </ul>
 
-    <form @submit.prevent="createTask">
-      <fieldset>
-        <legend>Create a new task</legend>
-        <input v-model="title" type="text" placeholder="Task title" />
-        <button type="submit" :disabled="!title">Create</button>
-      </fieldset>
-    </form>
+    <UButtonGroup class="w-full">
+      <UInput
+        v-model="title"
+        class="w-full"
+        type="text"
+        placeholder="New task"
+      />
+      <UButton type="submit" :disabled="!title" @click="createTask">
+        Create
+      </UButton>
+    </UButtonGroup>
   </div>
 </template>
 
