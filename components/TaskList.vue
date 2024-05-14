@@ -1,6 +1,23 @@
 <template>
   <div class="max-w-xs space-y-3">
-    <ul v-if="data" class="space-y-1">
+    <UButtonGroup class="w-full">
+      <UInput
+        v-model="title"
+        class="w-full"
+        type="text"
+        placeholder="New task"
+      />
+      <UButton type="submit" :disabled="!title" @click="createTask">
+        Create
+      </UButton>
+    </UButtonGroup>
+
+    <TransitionGroup
+      v-if="data"
+      name="list"
+      class="relative space-y-1"
+      tag="ul"
+    >
       <li
         v-for="task in data"
         :key="task.id"
@@ -29,19 +46,7 @@
           @click="deleteTask(task)"
         />
       </li>
-    </ul>
-
-    <UButtonGroup class="w-full">
-      <UInput
-        v-model="title"
-        class="w-full"
-        type="text"
-        placeholder="New task"
-      />
-      <UButton type="submit" :disabled="!title" @click="createTask">
-        Create
-      </UButton>
-    </UButtonGroup>
+    </TransitionGroup>
   </div>
 </template>
 
@@ -110,3 +115,20 @@ async function deleteTask(task: Task) {
   disabled.value = disabled.value.filter((id) => id !== task.id)
 }
 </script>
+
+<style scoped>
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.list-enter-from,
+.list-leave-to {
+  @apply translate-x-8 opacity-0;
+}
+
+.list-leave-active {
+  @apply absolute;
+}
+</style>
