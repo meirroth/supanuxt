@@ -6,6 +6,8 @@
         class="w-full"
         type="text"
         placeholder="New task"
+        autofocus
+        @keyup.enter="createTask"
       />
       <UButton type="submit" :disabled="!title" @click="createTask">
         Create
