@@ -9,7 +9,7 @@
         autofocus
         @keyup.enter="createTask"
       />
-      <UButton type="submit" :disabled="!title" @click="createTask">
+      <UButton type="button" :disabled="!title" @click="createTask">
         Create
       </UButton>
     </UButtonGroup>
