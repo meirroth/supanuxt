@@ -13,7 +13,7 @@
     </UButtonGroup>
 
     <TransitionGroup
-      v-if="data"
+      v-if="data?.length"
       name="list"
       class="relative space-y-1"
       tag="ul"
@@ -47,6 +47,10 @@
         />
       </li>
     </TransitionGroup>
+
+    <div v-else class="w-full text-center text-slate-400">
+      You've got nothing to do! 🎉
+    </div>
   </div>
 </template>
 
