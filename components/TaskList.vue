@@ -50,9 +50,7 @@
       </li>
     </TransitionGroup>
 
-    <div v-else class="w-full text-center text-slate-400">
-      You've got nothing to do! 🎉
-    </div>
+    <div v-else class="w-full text-center">You've got nothing to do! 🎉</div>
   </div>
 </template>
 
