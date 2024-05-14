@@ -33,7 +33,8 @@
         </p>
 
         <UToggle
-          :disabled="disabled.includes(task.id)"
+          :disabled="deleting.includes(task.id)"
+          :loading="completing.includes(task.id)"
           :model-value="task.completed"
           @update:model-value="completeTask(task)"
         />
@@ -43,8 +44,8 @@
           variant="soft"
           size="2xs"
           icon="i-heroicons-x-mark-20-solid"
-          :disabled="disabled.includes(task.id)"
-          :loading="disabled.includes(task.id)"
+          :disabled="completing.includes(task.id)"
+          :loading="deleting.includes(task.id)"
           @click="deleteTask(task)"
         />
       </li>
@@ -62,7 +63,8 @@ type Task = Tables<'tasks'>
 const client = useSupabaseClient<Database>()
 const toast = useToast()
 const title = ref('')
-const disabled = ref<number[]>([])
+const completing = ref<number[]>([])
+const deleting = ref<number[]>([])
 
 const { data, refresh } = useAsyncData(async () => {
   const { data: tasks } = await client
@@ -89,7 +91,7 @@ async function createTask() {
 }
 
 async function completeTask(task: Task) {
-  disabled.value.push(task.id)
+  completing.value.push(task.id)
 
   const { error } = await client
     .from('tasks')
@@ -102,11 +104,11 @@ async function completeTask(task: Task) {
     await refresh()
   }
 
-  disabled.value = disabled.value.filter((id) => id !== task.id)
+  completing.value = completing.value.filter((id) => id !== task.id)
 }
 
 async function deleteTask(task: Task) {
-  disabled.value.push(task.id)
+  deleting.value.push(task.id)
 
   const { error } = await client.from('tasks').delete().eq('id', task.id)
 
@@ -116,7 +118,7 @@ async function deleteTask(task: Task) {
     await refresh()
   }
 
-  disabled.value = disabled.value.filter((id) => id !== task.id)
+  deleting.value = deleting.value.filter((id) => id !== task.id)
 }
 </script>
 
