@@ -60,7 +60,7 @@ const { data, refresh } = useAsyncData(async () => {
     .from('tasks')
     .select('*')
     .order('completed')
-    .order('created_at')
+    .order('updated_at', { ascending: false })
   return tasks
 })
 
