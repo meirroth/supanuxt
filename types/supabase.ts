@@ -16,7 +16,7 @@ export type Database = {
           id: number
           title: string
           updated_at: string
-          user: string | null
+          user: string
         }
         Insert: {
           completed: boolean
@@ -24,7 +24,7 @@ export type Database = {
           id?: number
           title: string
           updated_at?: string
-          user?: string | null
+          user?: string
         }
         Update: {
           completed?: boolean
@@ -32,7 +32,7 @@ export type Database = {
           id?: number
           title?: string
           updated_at?: string
-          user?: string | null
+          user?: string
         }
         Relationships: [
           {
