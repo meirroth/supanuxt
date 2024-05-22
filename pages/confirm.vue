@@ -18,4 +18,8 @@ watch(
   },
   { immediate: true },
 )
+
+useSeoMeta({
+  title: 'Confirming magic link...',
+})
 </script>

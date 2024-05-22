@@ -10,4 +10,8 @@ const user = useSupabaseUser()
 if (user.value) {
   await navigateTo('/')
 }
+
+useSeoMeta({
+  title: 'Login',
+})
 </script>

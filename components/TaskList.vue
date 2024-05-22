@@ -53,7 +53,8 @@
 
     <div v-else class="w-full text-center">
       <span v-if="!user">
-        <NuxtLink to="/login" class="underline">Login</NuxtLink> to add tasks.
+        <NuxtLink to="/login" class="text-primary underline">Login</NuxtLink> to
+        add tasks.
       </span>
       <span v-else-if="status === 'pending'">Loading tasks...</span>
       <span v-else-if="status === 'success'">You've got nothing to do! 🎉</span>
