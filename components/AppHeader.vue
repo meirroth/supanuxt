@@ -7,12 +7,12 @@
       <div class="flex items-center gap-4">
         <UDropdown v-if="user" :items :popper="{ placement: 'bottom-start' }">
           <UButton
-            color="white"
+            color="gray"
             :label="user.email"
             trailing-icon="i-heroicons-chevron-down-20-solid"
           />
         </UDropdown>
-        <UButton v-else to="/login" color="white">Login</UButton>
+        <UButton v-else to="/login" color="gray">Login</UButton>
         <ColorMode />
       </div>
     </UContainer>
