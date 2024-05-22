@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-xs space-y-3">
+  <div class="space-y-3">
     <UButtonGroup class="w-full">
       <UInput
         v-model="title"
@@ -99,7 +99,11 @@ async function completeTask(task: Task) {
     .eq('id', task.id)
 
   if (error) {
-    toast.add({ color: 'red', title: error.message })
+    toast.add({
+      color: 'red',
+      icon: 'i-heroicons-exclamation-circle-20-solid',
+      title: error.message,
+    })
   } else {
     await refresh()
   }
@@ -113,7 +117,11 @@ async function deleteTask(task: Task) {
   const { error } = await client.from('tasks').delete().eq('id', task.id)
 
   if (error) {
-    toast.add({ color: 'red', title: error.message })
+    toast.add({
+      color: 'red',
+      icon: 'i-heroicons-exclamation-circle-20-solid',
+      title: error.message,
+    })
   } else {
     await refresh()
   }

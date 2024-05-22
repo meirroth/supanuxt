@@ -11,6 +11,8 @@ export default withNuxt([
     rules: {
       ...eslintConfigPrettier.rules,
       ...eslintPluginPrettierRecommended.rules,
+
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 ])
