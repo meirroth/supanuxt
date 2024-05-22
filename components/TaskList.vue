@@ -51,7 +51,17 @@
       </li>
     </TransitionGroup>
 
-    <div v-else class="w-full text-center">You've got nothing to do! 🎉</div>
+    <div v-else class="w-full text-center">
+      <span v-if="!user">
+        <NuxtLink to="/login" class="underline">Login</NuxtLink> to add tasks.
+      </span>
+      <span v-else-if="status === 'pending'">Loading tasks...</span>
+      <span v-else-if="status === 'success'">You've got nothing to do! 🎉</span>
+      <span v-else>
+        Couldn't fetch tasks.
+        <UButton color="white" variant="ghost" @click="refresh">Retry</UButton>
+      </span>
+    </div>
   </div>
 </template>
 
@@ -61,51 +71,89 @@ import type { Database, Tables } from '@/types/supabase'
 type Task = Tables<'tasks'>
 
 const client = useSupabaseClient<Database>()
+const user = useSupabaseUser()
 const toast = useToast()
 const title = ref('')
 const completing = ref<number[]>([])
 const deleting = ref<number[]>([])
 
-const { data, refresh } = useAsyncData(async () => {
-  const { data: tasks } = await client
-    .from('tasks')
-    .select('*')
-    .order('completed')
-    .order('updated_at', { ascending: false })
-  return tasks
+const { data, refresh, clear, status } = useAsyncData(async () => getTasks())
+
+watch(user, () => {
+  if (!user.value) {
+    clear()
+  }
 })
+
+async function getTasks() {
+  if (!user.value) return
+  try {
+    const { data, error } = await client
+      .from('tasks')
+      .select('*')
+      .eq('user', user.value.id)
+      .order('completed')
+      .order('updated_at', { ascending: false })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return data
+  } catch (error: any) {
+    toast.add({
+      color: 'red',
+      icon: 'i-heroicons-exclamation-circle-20-solid',
+      title: 'Couldn’t fetch tasks',
+      description: error.message,
+    })
+  }
+}
 
 async function createTask() {
   if (!title.value) return
+  try {
+    const { error } = await client
+      .from('tasks')
+      .insert({ title: title.value, completed: false })
 
-  const { error } = await client
-    .from('tasks')
-    .insert({ title: title.value, completed: false })
+    if (error) {
+      throw new Error(error.message)
+    }
 
-  if (error) {
-    alert(error.message)
-  } else {
     title.value = ''
     refresh()
+  } catch (error: any) {
+    toast.add({
+      color: 'red',
+      icon: 'i-heroicons-exclamation-circle-20-solid',
+      title: 'Couldn’t create task',
+      description: error.message,
+    })
   }
 }
 
 async function completeTask(task: Task) {
   completing.value.push(task.id)
 
-  const { error } = await client
-    .from('tasks')
-    .update({ completed: !task.completed })
-    .eq('id', task.id)
+  try {
+    const { error } = await client
+      .from('tasks')
+      .update({ completed: !task.completed })
+      .eq('id', task.id)
 
-  if (error) {
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    await refresh()
+  } catch (error: any) {
     toast.add({
       color: 'red',
       icon: 'i-heroicons-exclamation-circle-20-solid',
-      title: error.message,
+      title: 'Couldn’t update task',
+      description: error.message,
     })
-  } else {
-    await refresh()
   }
 
   completing.value = completing.value.filter((id) => id !== task.id)
@@ -114,16 +162,21 @@ async function completeTask(task: Task) {
 async function deleteTask(task: Task) {
   deleting.value.push(task.id)
 
-  const { error } = await client.from('tasks').delete().eq('id', task.id)
+  try {
+    const { error } = await client.from('tasks').delete().eq('id', task.id)
 
-  if (error) {
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    await refresh()
+  } catch (error: any) {
     toast.add({
       color: 'red',
       icon: 'i-heroicons-exclamation-circle-20-solid',
-      title: error.message,
+      title: 'Couldn’t delete task',
+      description: error.message,
     })
-  } else {
-    await refresh()
   }
 
   deleting.value = deleting.value.filter((id) => id !== task.id)
