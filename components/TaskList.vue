@@ -27,7 +27,7 @@
       >
         <p
           class="w-full leading-tight"
-          :class="{ 'line-through': task.completed }"
+          :class="{ 'line-through opacity-50': task.completed }"
         >
           {{ task.title }}
         </p>
