@@ -27,8 +27,8 @@ const user = useSupabaseUser()
 const items: DropdownItem[][] = [
   [
     {
-      label: 'Profile',
-      to: '/profile',
+      label: 'Account',
+      to: '/account',
       icon: 'i-heroicons-user-20-solid',
     },
   ],
